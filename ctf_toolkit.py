@@ -5,15 +5,14 @@ A menu-driven script for common encoding/decoding operations used in CTFs.
 """
 
 import base64
-import binascii
 import hashlib
 import urllib.parse
 import html
 import sys
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # BASE64
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def base64_tool():
     action = input("  [1] Encode  [2] Decode : ").strip()
     text = input("  Enter text: ").strip()
@@ -29,9 +28,9 @@ def base64_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # BASE32
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def base32_tool():
     action = input("  [1] Encode  [2] Decode : ").strip()
     text = input("  Enter text: ").strip()
@@ -47,9 +46,9 @@ def base32_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # BASE58
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 def base58_encode(data: bytes) -> str:
@@ -58,7 +57,6 @@ def base58_encode(data: bytes) -> str:
     while num > 0:
         num, rem = divmod(num, 58)
         result = BASE58_ALPHABET[rem] + result
-    # handle leading zero bytes
     for byte in data:
         if byte == 0:
             result = BASE58_ALPHABET[0] + result
@@ -76,7 +74,6 @@ def base58_decode(s: str) -> bytes:
     while num > 0:
         num, rem = divmod(num, 256)
         result.insert(0, rem)
-    # handle leading 1s
     for char in s:
         if char == BASE58_ALPHABET[0]:
             result.insert(0, 0)
@@ -99,11 +96,11 @@ def base58_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # HEX
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def hex_tool():
-    action = input("  [1] Encode (text → hex)  [2] Decode (hex → text) : ").strip()
+    action = input("  [1] Encode (text to hex)  [2] Decode (hex to text) : ").strip()
     text = input("  Enter text: ").strip()
     if action == "1":
         result = text.encode().hex()
@@ -117,11 +114,11 @@ def hex_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # BINARY
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def binary_tool():
-    action = input("  [1] Text → Binary  [2] Binary → Text : ").strip()
+    action = input("  [1] Text to Binary  [2] Binary to Text : ").strip()
     text = input("  Enter text: ").strip()
     if action == "1":
         result = " ".join(format(ord(c), "08b") for c in text)
@@ -136,9 +133,9 @@ def binary_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # ROT13
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def rot13_tool():
     text = input("  Enter text: ").strip()
     result = text.translate(str.maketrans(
@@ -148,9 +145,9 @@ def rot13_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # CAESAR CIPHER (brute force all 25 shifts)
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def caesar_tool():
     text = input("  Enter text to brute force: ").strip()
     print("\n  All 25 shifts:")
@@ -165,9 +162,9 @@ def caesar_tool():
         print(f"  Shift {shift:>2}: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # URL ENCODE / DECODE
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def url_tool():
     action = input("  [1] Encode  [2] Decode : ").strip()
     text = input("  Enter text: ").strip()
@@ -180,9 +177,9 @@ def url_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # HTML ENTITY ENCODE / DECODE
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def html_tool():
     action = input("  [1] Encode  [2] Decode : ").strip()
     text = input("  Enter text: ").strip()
@@ -195,25 +192,24 @@ def html_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # XOR
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def xor_tool():
     text = input("  Enter text: ").strip()
     key = input("  Enter key (single char or string): ").strip()
     if not key:
         print("\n  [!] Key cannot be empty")
         return
-    # repeat key to match text length
     key_repeated = (key * (len(text) // len(key) + 1))[:len(text)]
     result = "".join(chr(ord(c) ^ ord(k)) for c, k in zip(text, key_repeated))
     print(f"\n  Result (raw) : {result}")
     print(f"  Result (hex) : {result.encode().hex()}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # MORSE CODE
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 MORSE_CODE = {
     "A": ".-",   "B": "-...", "C": "-.-.", "D": "-..",
     "E": ".",    "F": "..-.", "G": "--.",  "H": "....",
@@ -230,7 +226,7 @@ MORSE_CODE = {
 REVERSE_MORSE = {v: k for k, v in MORSE_CODE.items()}
 
 def morse_tool():
-    action = input("  [1] Text → Morse  [2] Morse → Text : ").strip()
+    action = input("  [1] Text to Morse  [2] Morse to Text : ").strip()
     text = input("  Enter text: ").strip()
     if action == "1":
         try:
@@ -251,9 +247,9 @@ def morse_tool():
     print(f"\n  Result: {result}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # HASH GENERATOR
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def hash_tool():
     text = input("  Enter text to hash: ").strip()
     print(f"\n  MD5    : {hashlib.md5(text.encode()).hexdigest()}")
@@ -262,9 +258,9 @@ def hash_tool():
     print(f"  SHA512 : {hashlib.sha512(text.encode()).hexdigest()}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 # HASH IDENTIFIER
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 def hash_identifier():
     h = input("  Paste hash: ").strip()
     length = len(h)
@@ -283,19 +279,56 @@ def hash_identifier():
         print("  Likely: SHA512")
     else:
         print(f"  Unknown hash type (length: {length})")
-    print(f"  Characters: {'hex only' if all(c in '0123456789abcdefABCDEF' for c in h) else 'non-hex detected'}")
+    is_hex = all(c in "0123456789abcdefABCDEF" for c in h)
+    print(f"  Characters: {'hex only' if is_hex else 'non-hex detected'}")
 
 
-# ─────────────────────────────────────────────
+# ---------------------------------------------
+# NUMBER BASE CONVERTER (any base 2-36)
+# ---------------------------------------------
+def base_converter():
+    print("  Convert a number between any bases (2 to 36)")
+    try:
+        from_base = int(input("  From base: ").strip())
+        to_base   = int(input("  To base  : ").strip())
+
+        if not (2 <= from_base <= 36) or not (2 <= to_base <= 36):
+            print("\n  [!] Base must be between 2 and 36")
+            return
+
+        number = input(f"  Enter number (base {from_base}): ").strip().upper()
+
+        # Step 1: convert input to decimal
+        decimal = int(number, from_base)
+
+        # Step 2: convert decimal to target base
+        digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        if decimal == 0:
+            result = "0"
+        else:
+            result = ""
+            n = decimal
+            while n > 0:
+                result = digits[n % to_base] + result
+                n //= to_base
+
+        print(f"\n  {number} (base {from_base}) = {result} (base {to_base})")
+        print(f"  Decimal value: {decimal}")
+
+    except ValueError as e:
+        print(f"\n  [!] Error: {e}")
+
+
+# ---------------------------------------------
 # MENU
-# ─────────────────────────────────────────────
+# ---------------------------------------------
 MENU = """
-╔══════════════════════════════════════╗
-║       CTF ENCODER/DECODER TOOLKIT   ║
-╚══════════════════════════════════════╝
++======================================+
+|      CTF ENCODER/DECODER TOOLKIT     |
++======================================+
 
   ENCODING / DECODING
-  ─────────────────────────────────────
+  -------------------------------------
    1.  Base64
    2.  Base32
    3.  Base58
@@ -308,10 +341,11 @@ MENU = """
    10. XOR
 
   MISC
-  ─────────────────────────────────────
+  -------------------------------------
    11. Morse Code
    12. Hash Generator (MD5/SHA1/SHA256/SHA512)
    13. Hash Identifier
+   14. Number Base Converter (any base 2-36)
 
    0.  Exit
 """
@@ -330,6 +364,7 @@ TOOLS = {
     "11": morse_tool,
     "12": hash_tool,
     "13": hash_identifier,
+    "14": base_converter,
 }
 
 def main():
